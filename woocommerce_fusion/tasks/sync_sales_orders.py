@@ -357,7 +357,7 @@ class SynchroniseSalesOrder(SynchroniseWooCommerce):
 
 				# Link created Payment Entry to Sales Order
 				sales_order.woocommerce_payment_entry = payment_entry.name
-
+				payment_entry.submit()
 			sales_order.custom_attempted_woocommerce_auto_payment_entry = 1
 			return True
 
