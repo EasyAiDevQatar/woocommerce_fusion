@@ -139,24 +139,34 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-scheduler_events = {
+#scheduler_events = {
 	# 	"all": [
 	# 		"woocommerce_fusion.tasks.all"
 	# 	],
 	# 	"weekly": [
 	# 		"woocommerce_fusion.tasks.daily"
 	# 	],
-	"hourly_long": [
-		"woocommerce_fusion.tasks.sync_sales_orders.sync_woocommerce_orders_modified_since",
-		"woocommerce_fusion.tasks.sync_items.sync_woocommerce_products_modified_since",
-	],
-	"daily_long": [
+#	"hourly_long": [
+#		"woocommerce_fusion.tasks.sync_sales_orders.sync_woocommerce_orders_modified_since",
+		#"woocommerce_fusion.tasks.sync_items.sync_woocommerce_products_modified_since",
+	#],
+	#"daily_long": [
 		"woocommerce_fusion.tasks.stock_update.update_stock_levels_for_all_enabled_items_in_background",
-		"woocommerce_fusion.tasks.sync_item_prices.run_item_price_sync_in_background",
-	],
-	# 	"monthly": [
+		#"woocommerce_fusion.tasks.sync_item_prices.run_item_price_sync_in_background",
+	#],#
+	## 	"monthly": [
 	# 		"woocommerce_fusion.tasks.monthly"
 	# 	],
+#}
+scheduler_events = {
+    "cron": {
+        "*/5 * * * *": [
+            "woocommerce_fusion.tasks.sync_sales_orders.sync_woocommerce_orders_modified_since",
+            "woocommerce_fusion.tasks.sync_items.sync_woocommerce_products_modified_since",
+            "woocommerce_fusion.tasks.stock_update.update_stock_levels_for_all_enabled_items_in_background",
+            "woocommerce_fusion.tasks.sync_item_prices.run_item_price_sync_in_background",
+        ]
+    }
 }
 
 # Testing
