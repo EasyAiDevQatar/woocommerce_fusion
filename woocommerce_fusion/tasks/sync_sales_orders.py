@@ -287,6 +287,10 @@ class SynchroniseSalesOrder(SynchroniseWooCommerce):
 			# Get Company Bank Account for this Payment Method
 			payment_method_bank_account_mapping = json.loads(wc_server.payment_method_bank_account_mapping)
 
+			# If Customer has purchased on Credit, skip payment entry creation
+			if wc_order.payment_method == 'credit':
+				return True
+			
 			if wc_order.payment_method not in payment_method_bank_account_mapping:
 				raise KeyError(
 					f"WooCommerce payment method {wc_order.payment_method} not found in WooCommerce Server"
