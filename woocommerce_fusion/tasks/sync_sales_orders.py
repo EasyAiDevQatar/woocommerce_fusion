@@ -336,33 +336,36 @@ class SynchroniseSalesOrder(SynchroniseWooCommerce):
 						reference_name = si_item_details[0].parent
 						total_amount = sales_order.grand_total
 
-				# Create Payment Entry
-				payment_entry_dict = {
-					"company": company,
-					"payment_type": "Receive",
-					"reference_no": payment_reference_no or wc_order.payment_method_title,
-					"reference_date": wc_order.date_paid or sales_order.transaction_date,
-					"party_type": "Customer",
-					"party": sales_order.customer,
-					"posting_date": wc_order.date_paid or sales_order.transaction_date,
-					"paid_amount": float(wc_order.total),
-					"received_amount": float(wc_order.total),
-					"bank_account": company_bank_account,
-					"paid_to": company_gl_account,
-				}
-				payment_entry = frappe.new_doc("Payment Entry")
-				payment_entry.update(payment_entry_dict)
-				row = payment_entry.append("references")
-				row.reference_doctype = reference_doctype
-				row.reference_name = reference_name
-				row.total_amount = total_amount
-				row.allocated_amount = total_amount
-				payment_entry.save()
+			# Create Payment Entry
+			payment_entry_dict = {
+				"company": company,
+				"payment_type": "Receive",
+				"mode_of_payment": wc_order.payment_method_title if len(wc_order.payment_method_title) < 140 else wc_order.payment_method,
+				"reference_no": payment_reference_no or wc_order.payment_method_title,
+				"reference_date": wc_order.date_paid or sales_order.transaction_date,
+				"party_type": "Customer",
+				"party": sales_order.customer,
+				"posting_date": wc_order.date_paid or sales_order.transaction_date,
+				"paid_amount": float(wc_order.total),
+				"received_amount": float(wc_order.total),
+				"bank_account": company_bank_account,
+				"paid_to": company_gl_account,
+			}
+			payment_entry = frappe.new_doc("Payment Entry")
+			payment_entry.update(payment_entry_dict)
+			row = payment_entry.append("references")
+			row.reference_doctype = reference_doctype
+			row.reference_name = reference_name
+			row.total_amount = total_amount
+			row.allocated_amount = total_amount
+			payment_entry.save()
 
-				# Link created Payment Entry to Sales Order
-				sales_order.woocommerce_payment_entry = payment_entry.name
-				payment_entry.submit()
+			# Link created Payment Entry to Sales Order
+			sales_order.woocommerce_payment_entry = payment_entry.name
+			payment_entry.submit()
 			sales_order.custom_attempted_woocommerce_auto_payment_entry = 1
+			print("Payment Entry created and linked to Sales Order")
+			print(payment_entry.as_dict())
 			return True
 
 	def update_woocommerce_order(self, wc_order: WooCommerceOrder, sales_order: SalesOrder) -> None:
